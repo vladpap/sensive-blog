@@ -46,6 +46,7 @@ def index(request):
 
     most_popular_posts = Post.objects \
         .popular() \
+        .prefetch_related('tags') \
         .prefetch_related('author')[:5] \
         .fetch_with_comments_count()
 
