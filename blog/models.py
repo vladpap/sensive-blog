@@ -34,7 +34,24 @@ class PostQuerySet(models.QuerySet):
 
         for post in self:
             post.comments_count = count_for_id[post.id]
-            
+
+        return self
+
+
+    def fetch_with_tags_count(self):
+        posts_ids = [post.id for post in self]
+
+        post_with_tags = Post.objects.\
+            filter(id__in=posts_ids).\
+            annotate(tags_count=Count('tags'))
+
+        ids_and_tags = post_with_tags.\
+                            values_list('id', 'tags_count')
+        count_for_id = dict(ids_and_tags)
+
+        for post in self:
+            post.tags_count = count_for_id[post.id]
+
         return self
 
 
