@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django.db.models import Count
 
 
-
 class PostQuerySet(models.QuerySet):
 
     def year(self, year):
@@ -13,13 +12,11 @@ class PostQuerySet(models.QuerySet):
             .order_by('published_at')
         return posts_at_year
 
-
     def popular(self):
         popular_posts = self \
             .annotate(likes_count=Count('likes')) \
             .order_by('-likes_count')
         return popular_posts
-
 
     def fetch_with_comments_count(self):
         most_popular_posts_ids = [post.id for post in self]
@@ -28,8 +25,8 @@ class PostQuerySet(models.QuerySet):
             filter(id__in=most_popular_posts_ids).\
             annotate(comments_count=Count('comments'))
 
-        ids_and_comments = post_with_comments.\
-                            values_list('id', 'comments_count')
+        ids_and_comments = post_with_comments \
+            .values_list('id', 'comments_count')
         count_for_id = dict(ids_and_comments)
 
         for post in self:
@@ -37,20 +34,9 @@ class PostQuerySet(models.QuerySet):
 
         return self
 
-
     def fetch_with_tags_count(self):
-        posts_ids = [post.id for post in self]
-
-        post_with_tags = Post.objects.\
-            filter(id__in=posts_ids).\
-            annotate(tags_count=Count('tags'))
-
-        ids_and_tags = post_with_tags.\
-                            values_list('id', 'tags_count')
-        count_for_id = dict(ids_and_tags)
-
         for post in self:
-            post.tags_count = count_for_id[post.id]
+            post.tags_count = post.tags.count()
 
         return self
 
