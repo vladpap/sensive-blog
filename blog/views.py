@@ -117,7 +117,7 @@ def tag_filter(request, tag_title):
     most_popular_tags = Tag.objects.popular()[:5]
 
     most_popular_posts = Post.objects \
-        .order_by('-published_at')[:5] \
+        .popular()[:5] \
         .prefetch_related('tags') \
         .prefetch_related('author') \
         .fetch_with_tags_count() \
