@@ -3,7 +3,7 @@ from blog.models import Comment, Post, Tag
 from django.shortcuts import get_object_or_404
 
 
-def serialize_post_optimized(post):
+def serialize_post(post):
     return {
         'title': post.title,
         'teaser_text': post.text[:200],
@@ -46,10 +46,10 @@ def index(request):
 
     context = {
         'most_popular_posts': [
-            serialize_post_optimized(post) for post in most_popular_posts
+            serialize_post(post) for post in most_popular_posts
             ],
         'page_posts': [
-            serialize_post_optimized(post) for post in most_fresh_posts
+            serialize_post(post) for post in most_fresh_posts
             ],
         'popular_tags': [
             serialize_tag(tag, tag.num_posts) for tag in most_popular_tags
@@ -105,7 +105,7 @@ def post_detail(request, slug):
             serialize_tag(tag, tag.num_posts) for tag in most_popular_tags
             ],
         'most_popular_posts': [
-            serialize_post_optimized(post) for post in most_popular_posts
+            serialize_post(post) for post in most_popular_posts
         ],
     }
     return render(request, 'post-details.html', context)
@@ -134,9 +134,9 @@ def tag_filter(request, tag_title):
         'popular_tags': [
             serialize_tag(tag, tag.num_posts) for tag in most_popular_tags
             ],
-        'posts': [serialize_post_optimized(post) for post in related_posts],
+        'posts': [serialize_post(post) for post in related_posts],
         'most_popular_posts': [
-            serialize_post_optimized(post) for post in most_popular_posts
+            serialize_post(post) for post in most_popular_posts
         ],
     }
     return render(request, 'posts-list.html', context)
